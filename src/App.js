@@ -29,17 +29,23 @@ function Button ({children, onClick}) {
 
 export default function App() { 
 
+  const [friends , SetAddFriends] = useState (initialFriends)
+
   const [showAddFriend, SetShowAddFriend] = useState(false);
 
   function handleShowAddedFriend() {
     return  SetShowAddFriend(!showAddFriend);
   }
 
+  function handlerAddFriend(friend) {
+    SetAddFriends(friends => [...friends, friend]);
+  }
+
   return <div className="app">
     
     <div className="sidebar">
-      <FriendsList/>    
-      { showAddFriend  && < FormAddFriend/>}
+      <FriendsList friends = {friends}/>    
+      { showAddFriend  && < FormAddFriend onAddFriend ={handlerAddFriend} /> }
       <Button  onClick={handleShowAddedFriend} > {showAddFriend !=  false ? "Close"  : "Add friend"} </Button>
     </div>
 
@@ -51,9 +57,10 @@ export default function App() {
 }
 
 
-function FriendsList() {
+function FriendsList({friends}) {
 
-  const friends = initialFriends;
+
+
 
   return <ul>{
     friends.map((friend)=> 
@@ -84,21 +91,44 @@ function Friend ({friend}) {
 }
 
 
-function FormAddFriend () {
+
+function FormAddFriend({ onAddFriend }) {
+  const [name, SetName] = useState("");
+  const [image, SetImage] = useState("https://i.pravatar.cc/48");
+
+  function handleSumbit(e) {
+    e.preventDefault();
+
+    if (!name || !image) return;
+
+    const id = crypto.randomUUID();
+
+    const newFriend = {
+      id,
+      name,
+      image: `${image}?=${id}`,
+      balance: 0,
+    };
+
+    onAddFriend(newFriend);
+
+    SetName("");
+    SetImage("https://i.pravatar.cc/48");
+  }
+
   return (
-    <form className="form-add-friend">  
+    <form className="form-add-friend" onSubmit={handleSumbit}>  
       <label> 👥 Friend name:</label> 
-      <input type="text"/>
+      <input type="text" value={name} onChange={(e)=>  SetName(e.target.value)}/>
 
       <label> 📷 Add a friend picture :</label> 
-      <input type="text"/>
+      <input type="text" value={image} onChange={(e)=>  SetImage(e.target.value)}/>
 
        <Button>Add</Button>
-
+ 
     </form>
-  )
+  );
 }
-
 
 function FormSplitBill() {
   return (
