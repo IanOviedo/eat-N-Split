@@ -147,33 +147,43 @@ function FormAddFriend({ onAddFriend  }) {
   );
 }
 
-function FormSplitBill({selectedFriend}) {
+function FormSplitBill({ selectedFriend }) {
+  const [bill, setBill] = useState("");
+  const [paidByUser, setPaidByUser] = useState("");
+  const paidByFriend = bill ?  bill - paidByUser : "";
+  const [whoIsPaying, setWhoIsPaying] = useState("user");
+
   return (
+    <form className="form-split-bill">
+      <h2>Split a Bill with: {selectedFriend.name}</h2>
 
-    <form className="form-split-bill"> 
-    <h2>Split a Bill with: {`${selectedFriend.name  }`}</h2>
+      <label>💸 Bill cost</label>
+      <input
+        type="text"
+        value={bill}
+        onChange={(e) => setBill(Number(e.target.value))}
+      />
 
-      <label> 💸 Bill cost </label> 
-      <input type="text"/>
+      <label>🙋‍♂️ Your expense</label>
+      <input
+        type="text"
+        value={paidByUser}
+        onChange={(e) => setPaidByUser(Number(e.target.value) > bill ? paidByUser : Number(e.target.value))}
+      />
 
-      <label>🙋‍♂️ Your part </label> 
-      <input type="text"/>
+      <label>{selectedFriend.name}'s expense</label>
+      <input type="text" disabled value={paidByFriend}  />
 
-      <label> {`${selectedFriend.name}'s expense  `} </label> 
-      <input type="text" disabled/>
-
-       <label> Who is paying this time ?? 👀 </label> 
-       <select>
+      <label>Who is paying this time ?? 👀</label>
+      <select
+        value={whoIsPaying}
+        onChange={(e) => setWhoIsPaying(e.target.value)}
+      >
         <option value="user">You</option>
-        <option value="friend" >{`${selectedFriend.name}`}</option>
-       </select>
+        <option value="friend">{selectedFriend.name}</option>
+      </select>
 
-
-       <Button>Split Bill</Button>
+      <Button>Split Bill</Button>
     </form>
-
-    
-    
-  )
-
+  );
 }
